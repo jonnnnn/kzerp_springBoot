@@ -42,13 +42,6 @@
 		<lombok.version>1.18.4</lombok.version>
 		<pinyin.version>2.5.0</pinyin.version>
 		<oshi-core>3.9.1</oshi-core>
-
-		<!--wagon plugin 配置-->
-		<service-path>/work/renren</service-path>
-		<pack-name>${project.artifactId}-${project.version}.jar</pack-name>
-		<remote-addr>192.168.1.10:22</remote-addr>
-		<remote-username>root</remote-username>
-		<remote-passwd>123456</remote-passwd>
 	</properties>
 
 	<dependencies>
