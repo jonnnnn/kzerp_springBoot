@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.imema.modules.so.dao.SalesOrderDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.imema.modules.so.entity.SalesOrderEntity" id="salesOrderMap">
+        <result property="id" column="ID"/>
+        <result property="orderType" column="ORDER_TYPE"/>
+        <result property="orderNum" column="ORDER_NUM"/>
+        <result property="customerId" column="CUSTOMER_ID"/>
+        <result property="orderDate" column="ORDER_DATE"/>
+        <result property="pic" column="PIC"/>
+        <result property="planDeliveryDate" column="PLAN_DELIVERY_DATE"/>
+        <result property="status" column="STATUS"/>
+        <result property="orderAmount" column="ORDER_AMOUNT"/>
+        <result property="receiveAddress" column="RECEIVE_ADDRESS"/>
+        <result property="receiveName" column="RECEIVE_NAME"/>
+        <result property="receivePhone" column="RECEIVE_PHONE"/>
+        <result property="remark" column="REMARK"/>
+        <result property="companyId" column="COMPANY_ID"/>
+        <result property="deletedFlag" column="DELETED_FLAG"/>
+        <result property="createBy" column="CREATE_BY"/>
+        <result property="createDate" column="CREATE_DATE"/>
+        <result property="updateBy" column="UPDATE_BY"/>
+        <result property="updateDate" column="UPDATE_DATE"/>
+    </resultMap>
+
+    <select id="orderList" parameterType="map" resultType="com.imema.modules.so.entity.SalesOrderEntity">
+        select a.*,(select name from mas_cust_vendor v where v.id = a.CUSTOMER_ID) as customer_Name
+         from sal_sales_order a
+        where a.DELETED_FLAG ='N'
+
+        <if test="p.orderType != null and p.orderType != '' ">
+            and a.ORDER_TYPE = #{p.orderType}
+        </if>
+        <if test="p.sql_filter != null and p.sql_filter != '' ">
+            and ${p.sql_filter}
+        </if>
+        <if test="p.orderNum != null and p.orderNum != '' ">
+            and a.ORDER_NUM like concat('%',#{p.orderNum ,jdbcType=VARCHAR},'%')
+        </if>
+        <choose>
+            <when test="p.custId != null and p.custId != '' ">
+                and a.CUSTOMER_ID = #{p.custId}
+            </when>
+            <otherwise>
+                <if test="p.custName != null and p.custName != '' ">
+                    and a.CUSTOMER_ID in(select id from mas_cust_vendor v where v.`NAME` like concat('%',#{p.custName ,jdbcType=VARCHAR},'%') and CUST_VENDOR='CUST')
+                </if>
+            </otherwise>
+        </choose>
+        <if test="p.status != null and p.status !=''">
+            and a.status = #{p.status}
+        </if>
+        <if test="p.bDate != null and p.bDate.size()> 0 and p.bDate[0] != null and p.bDate[0] != ''" >
+            and a.ORDER_DATE >= #{p.bDate[0]}
+        </if>
+        <if test="p.bDate != null and p.bDate.size()> 1 and p.bDate[1] != null and p.bDate[1] != ''" >
+            and a.ORDER_DATE &lt;= #{p.bDate[1]}
+        </if>
+        <if test="p.shipType != null and p.shipType != '' ">
+            and a.SHIP_TYPE = #{p.shipType}
+        </if>
+        <if test="p.receiveAddress != null and p.receiveAddress != '' ">
+            and a.RECEIVE_ADDRESS like concat('%',#{p.receiveAddress},'%')
+        </if>
+        <if test="p.receiveName != null and p.receiveName != '' ">
+            and (a.RECEIVE_NAME like concat('%',#{p.receiveName},'%')
+              or a.RECEIVE_PHONE like concat('%',#{p.receiveName},'%'))
+        </if>
+
+
+        <if test="p.productIds != null and p.productIds != '' ">
+            and a.id in(select ORDER_ID from sal_sales_order_line l where l.PRODUCT_ID in(${p.productIds}))
+        </if>
+
+
+        <if test="page.orders ==null or page.orders.size() == 0 ">
+            order by id desc
+        </if>
+    </select>
+
+
+    <select id="getProduct" resultType="java.util.Map">
+        select s.*,CONCAT_WS(' ',s.`NAME`,s.CODE,s.PIC_CODE,b.`NAME`,s.`NAME`,v.`NAME`,s.SPECIAL_PARAM,s.`DESCRIPTION`,'销售价:',
+        0,'库存:',CAST((select sum(o.INVENTORY_QUANTITY) from inv_onhand o where o.PRODUCT_ID = s.ID) as SIGNED)) as val,
+        (select sum(o.INVENTORY_QUANTITY) from inv_onhand o where o.PRODUCT_ID = s.ID) as stock,
+        0 as salePrice,s.BAR_CODE as barCode,s.SPECIAL_PARAM as specialParam,s.id,s.NAME as name,
+        b.name as brand,v.name as vehicle,m.name as madein,'12' as AAA_BBB
+
+
+        from mtl_product s
+        LEFT JOIN mtl_product_brand b on s.BRAND_ID = b.ID
+        left JOIN mtl_product_madein m on m.ID = s.MADEIN_ID
+        LEFT JOIN mtl_product_vehicle v on v.ID = s.VEHICLE_ID
+
+
+        where 1=1
+        <if test="name != null and name !=''">
+            and (s.name like concat('%',#{name},'%')
+            or s.code like concat('%',#{name},'%')
+            or s.PIC_CODE like concat('%',#{name},'%')
+            or b.name like concat('%',#{name},'%')
+            or m.name like concat('%',#{name},'%')
+            or v.name like concat('%',#{name},'%') )
+        </if>
+
+
+
+    </select>
+    <select id="getCustVender" resultType="java.util.Map">
+
+        select ID AS id,NAME as name from mas_cust_vendor v where 1=1
+        <if test="type != null and type != ''">
+            and v.CUST_VENDOR = #{type}
+        </if>
+        <if test="name != null and name != ''">
+            and v.name like concat('%',#{name},'%')
+        </if>
+    </select>
+
+
+    <select id="getCustLastPrice" resultType="java.util.Map">
+
+        select p.id,
+            (
+            select b.PRICE from sal_sales_order a,sal_sales_order_line b
+            where a.id = b.ORDER_ID and a.DELETED_FLAG !='Y'
+            and a.CUSTOMER_ID = #{customerId} and b.PRODUCT_ID = p.id order by b.ID desc limit 1
+            ) as lastPrice
+        from mtl_product p
+        where p.id in(${productIds})
+    </select>
+
+
+</mapper>

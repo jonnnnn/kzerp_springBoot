@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.imema.modules.fin.dao.FinSubjectDao">
+    <select id="queryList" resultType="com.imema.modules.fin.entity.FinSubject">
+        SELECT
+        f.*,
+        si.NAME AS category_name
+        FROM
+        fin_subject f
+        LEFT JOIN sys_dictionary_item si ON f.category = si.code
+        LEFT JOIN (select * from sys_dictionary s where s.code='SUBJECT_CAT')sc
+          ON si.DICTIONARY_ID = sc.id where 1=1
+        <if test="p.subjectType!=null and p.subjectType!=''">
+            and f.SUBJECT_TYPE like '%${p.subjectType}%'
+        </if>
+        <if test="p.category!=null and p.category!=''">
+            and f.CATEGORY like '%${p.category}%'
+        </if>
+        <if test="p.name!=null and p.name!=''">
+            and f.name like '%${p.name}%'
+        </if>
+    </select>
+</mapper>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.imema.modules.base.dao.MasCustVendorContactDao">
+    <select id="selectByMap" resultType="com.imema.modules.base.entity.MasCustVendorContact">
+        select mc.*,m.name as cust_name from mas_cust_vendor_contact mc left join mas_cust_vendor m on mc.cust_id=m.id where 1=1
+        <if test="p.shortName!=null and p.shortName!=''">
+            and mc.short_name like '%${p.shortName}%'
+        </if>
+        <if test="p.name!=null and p.name!=''">
+            and mc.name like '%${p.name}%'
+        </if>
+        <if test="p.mobileNo!=null and p.mobileNo!=''">
+            and mc.mobile_no like '%${p.mobileNo}%'
+        </if>
+        <if test="p.custName!=null and p.custName!=''">
+            and m.name like '%${p.custName}%'
+        </if>
+        order by id desc
+    </select>
+</mapper>

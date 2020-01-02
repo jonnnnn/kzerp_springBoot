@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) 2018-2019 广州盟码信息科技有限公司 All rights reserved.
+  -->
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.imema.modules.fin.dao.RealPayrecDao">
+
+    <select id="queryPage" resultType="com.imema.modules.fin.entity.RealPayrecEntity">
+        select a.*,
+        (select name from mas_cust_vendor v where v.id = a.CUST_ID) as CUST_NAME,
+        (SELECT fa.name FROM `fin_real_payrec_dtl` frpd,fin_account fa where frpd.GATHERING_ID =a.id and frpd.GATHERING_TYPE = fa.ID) as ACCOUNT_MEAN,
+        sdi.NAME as SUMMARY_MEAN
+        from fin_real_payrec a,sys_dictionary_item sdi
+        where a.DELETED_FLAG='N' and a.SUMMARY = sdi.id
+
+        <if test="p.sql_filter != null and p.sql_filter != '' ">
+            and ${p.sql_filter}
+        </if>
+
+        <if test="p.custName != null and p.custName != '' ">
+            and a.CUST_ID in(select id from mas_cust_vendor v where v.`NAME` like concat('%',#{p.custName ,jdbcType=VARCHAR},'%') )
+        </if>
+
+        <if test="p.summary != null and p.summary != '' ">
+            and a.summary = #{p.summary}
+        </if>
+
+        <if test="p.bDate != null and p.bDate.size()> 0 and p.bDate[0] != null and p.bDate[0] != ''" >
+            and a.PAY_DATE >= #{p.bDate[0]}
+        </if>
+        <if test="p.bDate != null and p.bDate.size()> 1 and p.bDate[1] != null and p.bDate[1] != ''" >
+            and a.PAY_DATE &lt;= #{p.bDate[1]}
+        </if>
+
+
+
+
+        <if test="p.gatheringType != null and p.gatheringType != '' ">
+            AND A.ID IN(SELECT frpd.GATHERING_ID FROM `fin_real_payrec_dtl` frpd,fin_account fa where frpd.GATHERING_TYPE = fa.ID and fa.id = #{p.gatheringType})
+        </if>
+
+        <if test="p.status != null and p.status != '' ">
+            and a.STATUS = #{p.status}
+        </if>
+
+
+        <if test="p.pic != null and p.pic != '' ">
+            and a.pic like concat('%',#{p.pic ,jdbcType=VARCHAR},'%')
+        </if>
+
+
+
+
+
+
+        <if test="page.orders ==null or page.orders.size() == 0 ">
+            order by id desc
+        </if>
+
+    </select>
+
+</mapper>

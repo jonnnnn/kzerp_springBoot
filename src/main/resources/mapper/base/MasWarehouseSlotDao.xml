@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.imema.modules.base.dao.MasWarehouseSlotDao">
+    <select id="queryByMap" resultType="com.imema.modules.base.entity.MasWarehouseSlot">
+        select m.code as warehouse_name,mp.code as product_name, ms.* from mas_warehouse_slot ms
+        left join mas_warehouse m on ms.warehouse_id=m.id
+         left join mtl_product mp on ms.PRODUCT_ID=mp.id
+         where 1=1
+        <if test="p.warehouseName!=null and p.warehouseName!=''">
+            and m.code like '%${p.warehouseName}%'
+        </if>
+        <if test="p.name !=null and p.name!=''">
+            and ms.name like '%${p.name}%'
+        </if>
+        <if test="p.productName !=null and p.productName!=''">
+            and mp.code like '%${p.productName}%'
+        </if>
+        order by id desc
+    </select>
+</mapper>

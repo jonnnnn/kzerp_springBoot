@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.imema.modules.inv.dao.CheckBillLineDao">
+
+    <select id="getCheckBillLineEntityListByCheckBillId" resultType="com.imema.modules.inv.entity.CheckBillLineEntity">
+        select icbl.*,(select `code` from mtl_product where id=icbl.product_id)product_code
+         from inv_check_bill_line icbl where check_bill_id=#{checkBillId}
+    </select>
+
+</mapper>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.imema.modules.base.dao.MtlProductCategoryDao">
+    <select id="queryPage" resultType="com.imema.modules.base.entity.MtlProductCategory">
+        select m.* from mtl_product_category m where 1=1
+        <if test="p.code!=null and p.code!=''">
+            and m.code like '%${p.code}%'
+        </if>
+        <if test="p.name!=null and p.name!=''">
+            and m.name like '%${p.name}%'
+        </if>
+        order by id desc
+    </select>
+    <select id="checkCode" resultType="java.lang.Integer">
+        select count(*) from mtl_product_category m where m.company_id= #{s.companyId}
+        <if test="s.code!=null and s.code != ''">
+            and m.code = #{s.code}
+        </if>
+        <if test="s.id!=null and s.id != 0">
+            and m.id != #{s.id}
+        </if>
+    </select>
+    <select id="selectPcategory" resultType="java.util.Map">
+        select m.PARENT_ID as p_cate,m.code,m.name from mtl_product_category m where 1=1
+        and m.id = #{name}
+    </select>
+</mapper>

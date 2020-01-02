@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.imema.modules.base.dao.MasWarehouseDao">
+    <select id="queryPage" resultType="com.imema.modules.base.entity.MasWarehouse">
+        select m.* from mas_warehouse m where 1=1
+        <if test="p.code!=null and p.code!=''">
+            and m.code like '%${p.code}%'
+        </if>
+        <if test="p.name!=null and p.name!=''">
+            and m.name like '%${p.name}%'
+        </if>
+        <if test="p.mobileNo!=null and p.mobileNo!=''">
+            and m.mobile_no like '%${p.mobileNo}%'
+        </if>
+        order by id desc
+    </select>
+</mapper>

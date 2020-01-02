@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.imema.modules.inv.dao.ReservationsDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.imema.modules.inv.entity.ReservationsEntity" id="reservationsMap">
+        <result property="reservationId" column="RESERVATION_ID"/>
+        <result property="requirementDate" column="REQUIREMENT_DATE"/>
+        <result property="companyId" column="COMPANY_ID"/>
+        <result property="productId" column="PRODUCT_ID"/>
+        <result property="warehouseId" column="WAREHOUSE_ID"/>
+        <result property="tranType" column="TRAN_TYPE"/>
+        <result property="demandSourceHeaderId" column="DEMAND_SOURCE_HEADER_ID"/>
+        <result property="demandSourceLineId" column="DEMAND_SOURCE_LINE_ID"/>
+        <result property="reservationUomCode" column="RESERVATION_UOM_CODE"/>
+        <result property="reservationQuantity" column="RESERVATION_QUANTITY"/>
+        <result property="remark" column="REMARK"/>
+        <result property="deletedFlag" column="DELETED_FLAG"/>
+        <result property="createBy" column="CREATE_BY"/>
+        <result property="createDate" column="CREATE_DATE"/>
+        <result property="updateBy" column="UPDATE_BY"/>
+        <result property="updateDate" column="UPDATE_DATE"/>
+    </resultMap>
+
+
+</mapper>

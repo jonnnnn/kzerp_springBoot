@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.imema.modules.sys.dao.SysRoleDao">
+	
+	<!-- 查询用户创建的角色ID列表 -->
+	<select id="queryRoleList" resultType="com.imema.modules.sys.entity.SysRoleEntity">
+		select * from sys_role where create_user_id = #{createUserId}
+	</select>
+	<!-- 查询角色ID和名称 -->
+	<select id="queryRoleName" resultType="com.imema.modules.sys.entity.SysRoleEntity">
+		select * from sys_role where create_user_id = #{createUserId}
+	</select>
+
+	<select id="queryRoleNameList" resultType="com.imema.modules.sys.entity.SysRoleEntity">
+		select sr.* from sys_user_role sur,  sys_role sr where sur.role_id=sr.role_id and user_id = #{value}
+	</select>
+
+	<select id="orderList" parameterType="map" resultType="com.imema.modules.sys.entity.SysRoleEntity">
+		select a.*,(select name from sys_dept b where b.dept_id=a.dept_id) as dept_name,
+		(select name from sys_dept c where c.dept_id=a.company_id) as company_name
+		from sys_role a
+		where 1=1
+		<if test="p.roleName != null and p.roleName != '' ">
+			and a.role_name like concat('%',#{p.roleName ,jdbcType=VARCHAR},'%')
+		</if>
+
+		<if test="p.deptId != null and p.deptId !=''">
+			and a.dept_id = #{p.deptId}
+		</if>
+
+		<if test="p.createUserId != null and p.createUserId != '' ">
+			and a.create_user_id = #{p.createUserId}
+		</if>
+		<if test="p.companyId != null and p.companyId != '' ">
+			and a.company_id = #{p.companyId}
+		</if>
+		order by a.company_id
+	</select>
+
+	<select id="queryRoleId" parameterType="map" resultType="com.imema.modules.sys.entity.SysRoleEntity">
+		select a.*,(select name from sys_dept d where d.dept_id=a.company_id)as companyName
+		from sys_role a
+		where 1=1
+		<if test="p.roleName != null and p.roleName != '' ">
+			and a.role_name like concat('%',#{p.roleName ,jdbcType=VARCHAR},'%')
+		</if>
+
+		<if test="p.deptId != null and p.deptId !=''">
+			and a.dept_id = #{p.deptId}
+		</if>
+
+		<if test="p.createUserId != null and p.createUserId != '' ">
+			and a.create_user_id = #{p.createUserId}
+		</if>
+		<if test="p.companyId != null and p.companyId != '' ">
+			and a.company_id = #{p.companyId}
+		</if>
+		order by a.company_id
+	</select>
+</mapper>

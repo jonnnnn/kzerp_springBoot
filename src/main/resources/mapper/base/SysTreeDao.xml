@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.imema.modules.base.dao.SysTreeDao">
+
+    <select id="selectTreeByMapOps" resultType="com.imema.modules.base.entity.SysTree">
+        select st.* from sys_tree st where 1=1
+        <if test="p.type!=null and p.type!=''">
+            and st.type like '%${p.type}%'
+        </if>
+        <if test="p.code!=null and p.code!=''">
+            and st.code like '%${p.code}%'
+        </if>
+        <if test="p.name!=null and p.name!=''">
+            and st.name like '%${p.name}%'
+        </if>
+        order by id desc
+    </select>
+    <select id="selectByCode" resultType="java.lang.Integer">
+        select count(*) from sys_tree s where 1=1
+        <if test="c.id!=null and c.id!=0">
+            and s.id != #{c.id}
+        </if>
+        <if test="c.code!=null and c.code != ''">
+            and s.code = #{c.code}
+        </if>
+        <if test="c.companyId !=null">
+            and s.company_id = #{c.companyId}
+            and s.sys = 0
+        </if>
+    </select>
+</mapper>

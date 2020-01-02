@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.imema.modules.pur.dao.PoLineDao">
+
+    <select id="getPoLineEntityListByPoId" resultType="com.imema.modules.pur.entity.PoLineEntity">
+        select ppl.*,(select `code` from mtl_product where id=ppl.product_id)product_code,
+        (select name from mas_warehouse_slot where warehouse_id=pph.warehouse_id and product_id=ppl.product_id)warehouse_slot_id,
+        (ifnull(ppl.order_qty,0)-ifnull(ppl.total_accept_qty,0)) as accept_qty
+         from pur_po_line ppl inner join pur_po_header pph on ppl.order_id=pph.id where order_id=#{poHeaderId}
+    </select>
+    <update id="rollSourceLine">
+        <foreach collection="inoutBillLineEntityList" item="inv" index="index" open="" close="" separator=";">
+            update pur_po_line ppl
+            <set>
+                ppl.total_accept_qty=ppl.total_accept_qty-#{inv.qty},
+                ppl.total_freight=ppl.total_freight-#{inv.freight},
+                ppl.update_by=#{inv.updateBy},ppl.update_date=#{inv.updateDate}
+            </set>
+            <where>
+                ppl.id=#{inv.sourceOrderLineId}
+            </where>
+        </foreach>
+    </update>
+
+    <select id="getList" resultType="java.util.Map">
+        SELECT mws.name as wareSlot,pl.cost_price as costPrice,pl.TOTAL_ACCEPT_QTY as totalAcceptQty,pl.TOTAL_FREIGHT as totalFreight,p.ORDER_NUM as orderNum,p.status,p.ORDER_TYPE as orderType,ms.name as custName
+        ,mp.code as productCode,mw.code as houseCode,p.order_date as orderDate FROM `pur_po_line` pl
+        LEFT JOIN pur_po_header p ON pl.ORDER_ID=p.id
+        left join mas_cust_vendor ms on p.VENDOR_ID=ms.id
+        left join mtl_product mp on pl.PRODUCT_ID =mp.id
+        left join mas_warehouse mw on p.WAREHOUSE_ID =mw.id
+        left join mas_warehouse_slot mws on mw.id=mws.warehouse_id and mws.product_id=mp.id
+          where 1=1
+         <if test="pa.orderType!='' and pa.orderType!=null">
+             and p.order_type = #{pa.orderType}
+         </if>
+         <if test="pa.companyId!='' and pa.companyId!=null">
+             and p.company_id = #{pa.companyId}
+         </if>
+         <if test="pa.orderNum!='' and pa.orderNum!=null">
+             and p.order_num like '%${pa.orderNum}%'
+         </if>
+         <if test="pa.houseCode!='' and pa.houseCode!=null">
+             and mw.code like '%${pa.houseCode}%'
+         </if>
+         <if test="pa.productCode!='' and pa.productCode!=null">
+             and mp.code like '%${pa.productCode}%'
+         </if>
+         <if test="pa.custName!='' and pa.custName!=null">
+             and ms.name like '%${pa.custName}%'
+         </if>
+         <if test="pa.from!='' and pa.from!=null">
+             and p.order_date <![CDATA[>=]]> ${pa.from}
+         </if>
+         <if test="pa.to!='' and pa.to!=null">
+             and p.order_date <![CDATA[<=]]> #{pa.to}
+         </if>
+    </select>
+
+</mapper>

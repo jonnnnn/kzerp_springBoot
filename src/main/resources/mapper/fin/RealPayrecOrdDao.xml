@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) 2018-2019 广州盟码信息科技有限公司 All rights reserved.
+  -->
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.imema.modules.fin.dao.RealPayrecOrdDao">
+
+    <select id="queryPage" resultType="com.imema.modules.fin.entity.RealPayrecOrdEntity">
+        select * from fin_real_payrec_ord t where t.DELETED_FLAG='N'
+    </select>
+
+</mapper>

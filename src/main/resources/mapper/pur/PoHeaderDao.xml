@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.imema.modules.pur.dao.PoHeaderDao">
+
+    <select id="queryPage" resultType="com.imema.modules.pur.entity.PoHeaderEntity">
+        select pph.*,(select `name` from mas_cust_vendor where id=pph.vendor_id and cust_vendor='VENDOR')vendor_name,
+        (select cname from mas_employee where code=pph.agent_id)agent_name,
+        (select `name` from sys_dept where dept_id=pph.company_id)company_name,
+        (select `code` from mas_warehouse where id=pph.warehouse_id)warehouse_code
+        from pur_po_header pph where pph.deleted_flag='N'
+        <if test="p.orderType!=null and p.orderType!='' ">
+            and pph.order_type=#{p.orderType}
+        </if>
+        <if test="p.orderNum!=null and p.orderNum!='' ">
+            and pph.order_num like '%${p.orderNum}%'
+        </if>
+        <if test="p.vendorId!=null and p.vendorId!='' ">
+            and pph.vendor_id=#{p.vendorId}
+        </if>
+        <if test="p.status!=null and p.status!='' ">
+            and pph.status=#{p.status}
+        </if>
+        <if test="p.orderDate!=null and p.orderDate.size()>0 and p.orderDate[0]!=''  and p.orderDate[0]!=null ">
+            and pph.order_date between  #{p.orderDate[0]} and #{p.orderDate[1]}
+        </if>
+        <if test="p.warehouseId!=null and p.warehouseId!='' ">
+            and pph.warehouse_id=#{p.warehouseId}
+        </if>
+    </select>
+</mapper>

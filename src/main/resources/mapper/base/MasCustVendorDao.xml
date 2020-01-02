@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.imema.modules.base.dao.MasCustVendorDao">
+    <sql id="BaseColumnList">
+        id,cust_vendor,code,name,short_name,type,tel,fax,email,mm,company_address
+        ,legal_man,web_site,bank,bank_account,tax_num,pinyin_code,wb_code,pic,remark,
+        company_id,create_by,update_by,date_format(create_date,'%Y-%m-%d') as create_date,
+        date_format(update_date,'%Y-%m-%d') as update_date
+    </sql>
+    <select id="queryPage" resultType="com.imema.modules.base.entity.MasCustVendor">
+        SELECT
+        si.NAME AS t_name,
+        m.*
+        FROM
+        mas_cust_vendor m
+        LEFT JOIN sys_dictionary_item si ON m.cust_vendor = si.EXTEND_VAL AND m.type =
+        si.`code` LEFT JOIN ( SELECT * FROM sys_dictionary s WHERE s.CODE = 'CUST_TYPE' ) sc
+         ON si.DICTIONARY_ID = sc.id
+        WHERE
+        1 =1
+        <if test="p.name!=null and p.name!=''">
+            and m.name like '%${p.name}%'
+        </if>
+        <if test="p.code!=null and p.code!=''">
+            and m.code like '%${p.code}%'
+        </if>
+        <if test="p.tel!=null and p.tel!=''">
+            and m.tel like '%${p.tel}%'
+        </if>
+        <if test="p.shortName!=null and p.shortName!=''">
+             and m.short_name like '%${p.shortName}%'
+        </if>
+        <if test="p.type!=null and p.type!=''">
+            and m.CUST_VENDOR like '%${p.type}%'
+        </if>
+        <if test="p.pic!=null and p.pic!=''">
+            and m.pic like '%${p.pic}%'
+        </if>
+         order by id desc
+    </select>
+</mapper>

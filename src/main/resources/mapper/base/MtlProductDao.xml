@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.imema.modules.base.dao.MtlProductDao">
+    <select id="getProduct" resultType="com.imema.modules.base.entity.MtlProduct">
+        select p.*,
+        CONCAT_WS(' ',p.`NAME`,p.CODE,p.PIC_CODE,p.`BRAND`,P.`MADEIN`,p.`VEHICLE`,p.SPECIAL_PARAM,p.`DESCRIPTION`,'销售价:',
+        ifnull(pic.SALE_PRICE,'0'),
+        '库存:',CAST(v.QTY as SIGNED)) as val
+        ,ifnull(pic.SALE_PRICE,'0') as SALE_PRICE
+        ,ifnull(pic.COST_PRICE,'0') as COST_PRICE
+        ,IFNULL(v.QTY,0) as stock,v.warehouse_slot_id
+        from mtl_product p left join mtl_product_price pic on p.id = pic.PRODUCT_ID
+        <choose>
+            <when test="warehouseId != null and warehouseId != ''">
+                LEFT join v_prod_wh_stock v on v.WAREHOUSE_ID=#{warehouseId} and v.PRODUCT_ID = p.id
+            </when>
+            <otherwise>
+                LEFT join v_prod_stock v on v.PRODUCT_ID = p.id
+            </otherwise>
+        </choose>
+        where p.DELETED_FLAG='N'
+        <if test="companyId != null and companyId != ''">
+            and p.COMPANY_ID in (0,${companyId})
+        </if>
+        <if test="qureyStr != null and qureyStr != ''">
+            and MATCH(`NAME`,`CODE`, `ALISA_NAME`, `VEHICLE`, `BRAND`,
+            `MADEIN`,`bar_code`,pic_code,special_param,`DESCRIPTION`)
+            AGAINST(#{qureyStr} IN BOOLEAN MODE)
+        </if>
+        limit 100
+    </select>
+    <select id="getProductIds" resultType="java.lang.String">
+        select GROUP_CONCAT(id) as ids
+        from mtl_product p
+        where p.DELETED_FLAG='N'
+        <if test="value != null and value != ''">
+            and MATCH(`NAME`,`CODE`, `ALISA_NAME`, `VEHICLE`, `BRAND`,
+            `MADEIN`,`bar_code`,pic_code,special_param,`DESCRIPTION`)
+            AGAINST(#{value} IN BOOLEAN MODE)
+        </if>
+
+    </select>
+    <select id="selectByMapOpsLike" resultType="com.imema.modules.base.entity.MtlProduct">
+        select mpc.name as cate_name,mp.name as cate_code,mpb.name as b_name,mpm.name as m_name,mpv.name as v_name,mcv.name as d_name,mp.* from mtl_product mp
+        left join mtl_product_category mpc on mp.name=mpc.id
+        left join mtl_product_vehicle mpv on mp.vehicle_id=mpv.id
+        left join mtl_product_brand mpb on mp.brand_id=mpb.id
+        left join mtl_product_madein mpm on mp.madein_id=mpm.id
+        left join mas_cust_vendor mcv on mp.default_vendor_id=mcv.id
+        where 1=1
+        <if test="p.code!=null and p.code!=''">
+            and mp.code like '%${p.code}%'
+        </if>
+        <if test="p.name!=null and p.name!=''">
+            and mpc.name like '%${p.name}%'
+        </if>
+        <if test="p.categoryId!=null and p.categoryId!=''">
+            and (mp.name like '%${p.categoryId}%' or mpc.name like '%${p.categoryId}%')
+        </if>
+        <if test="p.vehicleId!=null and p.vehicleId!=''">
+            and (mp.vehicle_id like '%${p.vehicleId}%' or mpv.name like '%${p.vehicleId}%')
+        </if>
+        <if test="p.brandId!=null and p.brandId!=''">
+            and (mp.brand_id like '%${p.brandId}%' or mpb.name like '%${p.brandId}%')
+        </if>
+        <if test="p.madeinId!=null and p.madeinId!=''">
+            and (mp.madein_id like '%${p.madeinId}%' or mpm.name like '%${p.madeinId}%')
+        </if>
+        <if test="p.companyId!=null">
+            and mp.COMPANY_ID = #{p.companyId}
+        </if>
+        order by id desc
+    </select>
+    <select id="validateCode" resultType="java.lang.Integer">
+        select count(*) from mtl_product m
+        left join mtl_product_category mpc on m.name = mpc.CODE
+        where 1=1
+        <if test="c.code!=null and c.code!=''">
+            and mpc.code = #{c.code}
+        </if>
+        <if test="c.barCode!=null and c.barCode!=''">
+            and m.bar_code = #{c.barCode}
+        </if>
+        <if test="c.id!=null and c.id!=0">
+            and m.id != #{c.id}
+        </if>
+        <if test="c.name != null and c.name!= ''">
+            and m.name = #{c.name}
+        </if>
+        and m.company_id = #{c.companyId}
+    </select>
+</mapper>

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.imema.modules.so.dao.SalesOrderLineDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.imema.modules.so.entity.SalesOrderLineEntity" id="salesOrderLineMap">
+        <result property="id" column="ID"/>
+        <result property="orderId" column="ORDER_ID"/>
+        <result property="productId" column="PRODUCT_ID"/>
+        <result property="orderQty" column="ORDER_QTY"/>
+        <result property="realQty" column="REAL_QTY"/>
+        <result property="price" column="PRICE"/>
+        <result property="costPrice" column="COST_PRICE"/>
+        <result property="taxRate" column="TAX_RATE"/>
+        <result property="remark" column="REMARK"/>
+        <result property="createBy" column="CREATE_BY"/>
+        <result property="createDate" column="CREATE_DATE"/>
+        <result property="updateBy" column="UPDATE_BY"/>
+        <result property="updateDate" column="UPDATE_DATE"/>
+    </resultMap>
+    <select id="getListByOrderId" resultType="com.imema.modules.so.entity.SalesOrderLineEntity">
+        select s.*,p.name as PRODUCT_NAME,p.code as PRODUCT_CODE,p.BAR_CODE,p.UNIT,p.SPECIAL_PARAM,p.DESCRIPTION
+        ,P.MADEIN,P.VEHICLE,p.BRAND
+        ,ifnull(
+        ifnull((select b.PRICE from sal_sales_order a,sal_sales_order_line b
+        where a.id = b.ORDER_ID and a.DELETED_FLAG !='Y'
+        and a.CUSTOMER_ID =sso.CUSTOMER_ID and b.PRODUCT_ID = p.id order by b.ID desc limit 1)
+        ,(select pic.SALE_PRICE from mtl_product_price pic where pic.PRODUCT_ID = p.id limit 1))
+        ,'0') as b_price
+        ,(select sum(o.INVENTORY_QUANTITY) from inv_onhand o where o.PRODUCT_ID = p.ID) as STOCK
+        from sal_sales_order_line s,mtl_product p,sal_sales_order sso
+        where sso.id = s.order_id and s.PRODUCT_ID=p.id
+        <if test="id != null and id !='' ">
+            and s.ORDER_ID = #{id}
+        </if>
+    </select>
+
+    <select id="getTotalPrice" resultType="java.math.BigDecimal">
+        select ifnull(sum(l.ORDER_QTY*l.PRICE),0)
+         from sal_sales_order_line l where l.ORDER_ID = #{orderId}
+    </select>
+    <select id="querySum" resultType="java.util.Map">
+        SELECT sum(sl.ORDER_QTY) as s1,sum(sl.PRICE-sl.COST_PRICE) as s2,sum(s.*) as s3 from sal_sales_order s
+        left join sal_sales_order_line sl on s.id = sl.ORDER_ID
+        where 1=1
+        <if test="p.orderType!='' and p.orderType!=null">
+            s.ORDER_TYPE = #{p.orderType}
+        </if>
+        <if test="p.status!='' and p.status!=null">
+            and s.STATUS in #{p.status}
+        </if>
+        <if test="p.deletedFlag!=null and p.deletedFlag!=''">
+            and s.DELETED_FLAG = #{p.deletedFlag}
+        </if>
+        <if test="p.companyId!='' and p.companyId!=null">
+            and s.COMPANY_ID = #{p.companyId}
+        </if>
+        <if test="p.orderDate!='' and p.orderDate!=null and p.dateSal!='' and p.dateSal!=null">
+            and date_format(s.order_date,'%Y-%m-%d') = date_format(current_date,'%Y-%m-%d');
+        </if>
+        <if test="p.orderDate!='' and p.orderDate!=null and p.monthSal!='' and p.monthSal!=null">
+            and MONTH(current_date) = MONTH(s.ORDER_DATE);
+        </if>
+    </select>
+
+
+</mapper>

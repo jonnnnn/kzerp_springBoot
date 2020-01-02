@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.imema.modules.inv.dao.CheckBillDao">
+    <select id="queryPage" resultType="com.imema.modules.inv.entity.CheckBillEntity">
+        select icb.*,(select `code` from mas_warehouse where id=icb.warehouse_id)warehouse_code,
+        (select cname from mas_employee where code=icb.pic)pic_name,
+        (select `name` from sys_dept where dept_id=icb.company_id)company_name
+        from inv_check_bill icb where icb.deleted_flag='N'
+        <if test="p.orderNum!=null and p.orderNum!='' ">
+            and icb.order_num like '%${p.orderNum}%'
+        </if>
+        <if test="p.warehouseId!=null and p.warehouseId!='' ">
+            and icb.warehouse_id=#{p.warehouseId}
+        </if>
+        <if test="p.status!=null and p.status!='' ">
+            and icb.status=#{p.status}
+        </if>
+        <if test="p.checkDate!=null and p.checkDate.size()>0 and p.checkDate[0]!=''  and p.checkDate[0]!=null ">
+            and icb.check_date between  #{p.checkDate[0]} and #{p.checkDate[1]}
+        </if>
+        <if test="p.pic!=null and p.pic!='' ">
+            and icb.pic=#{p.pic}
+        </if>
+    </select>
+</mapper>

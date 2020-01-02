@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.imema.modules.sys.dao.SysDictionaryItemDao">
+    <select id="queryPage" resultType="com.imema.modules.sys.entity.SysDictionaryItemEntity">
+        select sd.name as dict_type,sdi.* from sys_dictionary_item sdi
+         left join sys_dictionary sd on sdi.DICTIONARY_ID=sd.id where 1=1
+          and (sdi.COMPANY_ID=0 or sdi.COMPANY_ID=#{p.companyId})
+         <if test="p.dictType!=null and p.dictType!=''">
+             and sd.name like '%${p.dictType}%'
+         </if>
+         <if test="p.name!=null and p.name !=''">
+             and sdi.name like '%${p.name}%'
+         </if>
+         <if test="p.code!=null and p.code!=''">
+             and sdi.code like '%${p.code}%'
+         </if>
+        order by id desc
+    </select>
+    <select id="checkCode" resultType="java.lang.Integer">
+        select count(*) from sys_dictionary_item sd where 1=1
+        <if test="pr.code!=null and pr.code!=''">
+            and sd.code =#{pr.code}
+        </if>
+        <if test="pr.id!=null and pr.id!=0">
+            and sd.id !=#{pr.id}
+        </if>
+    </select>
+</mapper>

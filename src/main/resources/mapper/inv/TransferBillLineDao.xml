@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.imema.modules.inv.dao.TransferBillLineDao">
+    <select id="getTransferBillLineEntityListByTransferBillId" resultType="com.imema.modules.inv.entity.TransferBillLineEntity">
+        select itbl.*,(select `code` from mtl_product where id=itbl.product_id)product_code
+         from inv_transfer_bill_line itbl where transfer_bill_id=#{transferBillId}
+    </select>
+</mapper>
