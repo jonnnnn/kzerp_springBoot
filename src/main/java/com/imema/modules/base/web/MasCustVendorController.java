@@ -1,5 +1,6 @@
 package com.imema.modules.base.web;
 
+import cn.hutool.core.util.PinyinUtil;
 import com.imema.common.utils.PageUtils;
 import com.imema.common.utils.R;
 import com.imema.common.utils.ShiroUtils;
@@ -25,10 +26,8 @@ public class MasCustVendorController {
 
     @RequestMapping(value = "/save",method = RequestMethod.POST)
     public R save(@RequestBody MasCustVendor vendor){
-        Integer id=vendor.getId();
-        if (id==null||id==0){
-            vendor.setPic(ShiroUtils.getUserEntity().getUsername());
-        }
+        String allFirstLetter = PinyinUtil.getAllFirstLetter(vendor.getCustname());
+        vendor.setPinyinCode(allFirstLetter);
         custVendorService.save(vendor);
         return R.ok();
     }

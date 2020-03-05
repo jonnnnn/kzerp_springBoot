@@ -1,0 +1,1 @@
+(window["webpackJsonp"]=window["webpackJsonp"]||[]).push([["chunk-2d0cb790"],{"4a8e":function(c){c.exports=JSON.parse('{"form":{"input":{"productId":"产品","salePrice":"默认销售价","costPrice":"当前成本价","remark":"备注"}}}')}}]);

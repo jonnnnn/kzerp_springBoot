@@ -19,8 +19,7 @@ public class MasCustVendorServiceImpl extends BaseServiceImpl<MasCustVendorDao, 
         Map<String, Object> pageForm = (Map<String, Object>) params.get("pageForm");
         Map<String, Object> dataForm = R.extractParams(params);
 
-        IPage<MasCustVendor> page = baseMapper.queryPage(
-                new Query<MasCustVendor>().getPage(pageForm), dataForm);
+        IPage<MasCustVendor> page = baseMapper.queryPage( new Query<MasCustVendor>().getPage(pageForm), dataForm);
         return new PageUtils(page);
     }
 }

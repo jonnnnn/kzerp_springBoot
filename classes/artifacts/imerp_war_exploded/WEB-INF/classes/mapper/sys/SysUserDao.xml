@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.imema.modules.sys.dao.SysUserDao">
+	<!-- 查询用户的所有权限 -->
+	<select id="queryAllPerms" resultType="string">
+		select m.perms from sys_user_role ur 
+			LEFT JOIN sys_role_menu rm on ur.role_id = rm.role_id 
+			LEFT JOIN sys_menu m on rm.menu_id = m.menu_id 
+		where ur.user_id = #{userId}
+	</select>
+	
+	<!-- 查询用户的所有菜单ID --> 
+	<select id="queryAllMenuId" resultType="long">
+		select distinct rm.menu_id from sys_user_role ur 
+			LEFT JOIN sys_role_menu rm on ur.role_id = rm.role_id 
+		where ur.user_id = #{userId}
+	</select>
+	
+	<select id="queryByUserName" resultType="com.imema.modules.sys.entity.SysUserEntity">
+		select a.*,111 as t1, 'fdsas' as t2, (select name from sys_dept d where d.dept_id=a.dept_id) as deptName
+		from sys_user a where username = #{username}
+	</select>
+
+	<select id="pageUserName" resultType="com.imema.modules.sys.entity.SysUserEntity">
+		select a.*,111 as t1, (select name from sys_dept d where d.dept_id=a.dept_id) as deptName
+		from sys_user a where username = #{username}
+	</select>
+
+	<select id="orderList" parameterType="map" resultType="com.imema.modules.sys.entity.SysUserEntity">
+		select a.*,(select name from sys_dept v where v.dept_id = a.dept_id) as dept_name,
+		(select name from sys_dept v where v.dept_id = a.company_id) as company_name
+		from sys_user a
+		where 1=1
+		<if test="p.username != null and p.username != '' ">
+			and a.username like concat('%',#{p.username ,jdbcType=VARCHAR},'%')
+		</if>
+
+		<if test="p.deptId != null and p.deptId !=''">
+			and a.dept_id = #{p.deptId}
+		</if>
+
+		<if test="p.email != null and p.email != '' ">
+			and a.email = #{p.email}
+		</if>
+		<if test="p.mobile != null and p.mobile != '' ">
+			and a.mobile like concat('%',#{p.mobile ,jdbcType=VARCHAR},'%')
+		</if>
+		<if test="p.companyId != null and p.companyId != '' ">
+			and a.company_id = #{p.companyId}
+		</if>
+		<if test="p.userId != null and p.userId != '' ">
+			and a.user_id = #{p.userId}
+		</if>
+		order by a.company_id
+	</select>
+
+	<select id="queryById" resultType="com.imema.modules.sys.entity.SysUserEntity">
+		select a.* from sys_user a where user_id = #{userId}
+	</select>
+	<select id="queryId" resultType="com.imema.modules.sys.entity.SysUserEntity">
+		select a.* from sys_user a where  a.mobile = #{mobile}
+	</select>
+	<select id="queryMobile"  parameterType="Map" resultType="com.imema.modules.sys.entity.SysUserEntity">
+		select a.* from sys_user a where
+		<if test="p.mobile != null and p.mobile != '' ">
+		a.mobile = #{p.mobile}
+		</if>
+		<if test="p.userId != null and p.userId != '' ">
+		and a.user_id = #{p.userId}
+		</if>
+	</select>
+
+	<select id="checkPassword"  parameterType="Map" resultType="com.imema.modules.sys.entity.SysUserEntity">
+		select a.* from sys_user a where
+		<if test="p.password != null and p.password != '' ">
+			a.password = #{p.password}
+		</if>
+		<if test="p.userId != null and p.userId != '' ">
+			and a.user_id = #{p.userId}
+		</if>
+	</select>
+	<select id="queryUsername" resultType="com.imema.modules.sys.entity.SysUserEntity">
+		select a.* from sys_user a where  a.username = #{username}
+	</select>
+
+
+</mapper>

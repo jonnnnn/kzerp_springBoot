@@ -138,4 +138,18 @@ public class PoHeaderEntity extends AbstractBaseModel implements Serializable {
 	@TableField(exist=false)
 	private List<PoLineEntity> lineList;
 
+	/**
+	 *供应商名称
+	 */
+	@TableField(exist=false)
+	private String custname;
+
+
+	/**
+	 * 采购员名称
+	 */
+	@TableField(exist=false)
+	private String agentname;
+
+
 }

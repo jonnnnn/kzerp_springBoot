@@ -38,7 +38,7 @@ public interface PoLineService extends IService<PoLineEntity> {
      * @param poHeaderId
      * @return
      */
-    List<PoLineEntity> getPoLineEntityListByPoId(Integer poHeaderId);
+    List<Map<String,Object>> getPoLineEntityListByPoId(Integer poHeaderId);
 
     /**
      * 判断是否入库完成

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.imema.modules.base.dao.MtlProductPriceDao">
+
+    <select id="selectCode" resultType="com.imema.modules.base.entity.MtlProductPrice">
+        select m.code as product_name,mp.* from mtl_product_price mp
+         left join mtl_product m on m.id=mp.product_id
+        where 1=1
+        <if test="p.productId!=null and p.productId!=''">
+            and (mp.product_id like '%${p.productId}%' or m.code like '%${p.productId}%')
+        </if>
+        order by id desc
+    </select>
+    <select id="getProductPrice" resultType="com.imema.modules.base.entity.MtlProductPrice">
+        select * from mtl_product_price where company_id=#{onhandEntity.companyId}
+         and product_id=#{onhandEntity.productId}
+    </select>
+    <select id="checkProductId" resultType="java.lang.Integer">
+        select count(*) from mtl_product_price mpp where mpp.COMPANY_ID=#{param.companyId}
+         and mpp.PRODUCT_ID=#{param.productId} and mpp.DELETED_FLAG='N'
+    </select>
+</mapper>

@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-
+import java.util.Map;
 
 
 /**
@@ -45,7 +45,7 @@ public class PoLineController {
     @ApiOperation("根据采购ID获取采购明细列表")
     public R list(@RequestBody FormParams params){
         int poHeaderId = Integer.parseInt(params.getParam("id").toString());
-        List<PoLineEntity> poLineEntityList=poLineService.getPoLineEntityListByPoId(poHeaderId);
+        List<Map<String,Object>> poLineEntityList=poLineService.getPoLineEntityListByPoId(poHeaderId);
         return R.ok().putData(poLineEntityList);
     }
 

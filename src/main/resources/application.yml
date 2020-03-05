@@ -7,7 +7,7 @@ server:
   port: 8081
   connection-timeout: 5000ms
   servlet:
-    context-path: /
+    context-path: /imerp
 
 spring:
   # 环境 dev|test|prod

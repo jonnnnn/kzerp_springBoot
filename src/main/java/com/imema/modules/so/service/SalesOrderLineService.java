@@ -20,7 +20,7 @@ import java.util.Map;
  */
 public interface SalesOrderLineService extends IService<SalesOrderLineEntity> {
 
-    List<SalesOrderLineEntity> queryOrder(Map<String, Object> params);
+    List<Map> queryOrder(Map<String, Object> params);
 
     Map<String,Object> querySummary(Map<String,Object> params);
 }

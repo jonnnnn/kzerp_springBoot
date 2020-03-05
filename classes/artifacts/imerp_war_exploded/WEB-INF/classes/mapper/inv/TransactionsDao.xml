@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.imema.modules.inv.dao.TransactionsDao">
+
+    <insert id="addTransactionsBatch">
+        INSERT INTO inv_transactions(product_id,warehouse_id,source_id,source_code,
+        source_line_id,transaction_reference,transaction_quantity,transaction_uom,sale_price,cost_price,
+        transaction_date,tran_type,prior_quantity,balance_quantity,prior_cost,new_cost,
+        employee_code,company_id,create_by,create_date,update_by,update_date)
+        VALUES
+        <foreach collection="inoutBillEntity.lineList" item="tran" separator=",">
+            (#{tran.productId},#{inoutBillEntity.warehouseId},#{inoutBillEntity.id},
+            #{inoutBillEntity.billNum},#{tran.sourceOrderLineId},#{inoutBillEntity.sourceOrderNum},
+            #{tran.realQty},#{tran.uom},#{tran.salePrice},#{tran.costPrice},now(),
+            #{inoutBillEntity.transactionType},#{tran.priorQuantity},#{tran.balanceQuantity},
+            #{tran.priorCost},#{tran.newCost},#{tran.createBy},#{inoutBillEntity.companyId},
+            #{tran.createBy},now(),#{tran.createBy},now()
+            )
+        </foreach>
+    </insert>
+
+    <select id="queryPage" resultType="com.imema.modules.inv.entity.TransactionsEntity">
+        select its.*,(select `code` from mtl_product where id=its.product_id)product_code,
+        (select `code` from mas_warehouse where id=its.warehouse_id)warehouse_code,
+        (select `name` from sys_dept where dept_id=its.company_id)company_name,
+        (select cname from mas_employee where `code`=its.EMPLOYEE_CODE)employee_name
+        from inv_transactions its where date_format(its.transaction_date,'%Y-%m-%d') between date_format(#{p.transactionDate[0]},'%Y-%m-%d')
+        and date_format(#{p.transactionDate[1]},'%Y-%m-%d')
+        <if test="p.warehouseId!=null and p.warehouseId!='' ">
+            and its.warehouse_id=#{p.warehouseId}
+        </if>
+        <if test="p.productCode!=null and p.productCode!='' ">
+            and its.product_id in(select id from mtl_product where `code` like '%${p.productCode}%')
+        </if>
+        <if test="p.tranType!=null and p.tranType!='' ">
+            and its.tran_type=#{p.tranType}
+        </if>
+        <if test="p.sourceCode!=null and p.sourceCode!='' ">
+            and its.source_code like '%${p.sourceCode}%'
+        </if>
+        <if test="p.transactionReference!=null and p.transactionReference!='' ">
+            and its.transaction_reference like '%${p.transactionReference}%'
+        </if>
+    </select>
+
+</mapper>

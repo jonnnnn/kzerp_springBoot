@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.imema.modules.sys.dao.SysDeptDao">
+
+	<select id="queryList" resultType="com.imema.modules.sys.entity.SysDeptEntity">
+		select t.*,(select t2.name from sys_dept t2 where t2.dept_id=t.parent_id)parent_name
+		from sys_dept t where FIND_IN_SET(t.dept_id ,(
+		SELECT GROUP_CONCAT(getParentDept(dept_id))
+		FROM sys_dept t1 WHERE
+		t1.del_flag = 0
+		<if test="name != null and name != '' ">
+			and t1.name like concat('%',#{name},'%')
+		</if>
+		))
+	</select>
+	
+	<select id="queryDetpIdList" resultType="long">
+		select dept_id from sys_dept where parent_id = #{value} and del_flag = 0
+	</select>
+	<select id="queryParentList" resultType="com.imema.modules.sys.entity.SysDeptEntity">
+		select t1.* from sys_dept t1 where t1.del_flag = 0 and
+		t1.parent_id = 0
+		order by t1.order_num asc
+	</select>
+	<select id="queryChildList" resultType="com.imema.modules.sys.entity.SysDeptEntity">
+		select t1.*,(select t2.name from sys_dept t2 where t2.dept_id=t1.parent_id)as parent_name  from sys_dept t1 where t1.del_flag = 0 and
+		t1.parent_id != 0
+		order by t1.order_num asc
+	</select>
+
+	<select id="queryname" resultType="com.imema.modules.sys.entity.SysDeptEntity">
+		select t1.* from sys_dept t1 where t1.del_flag!='-1 ' and
+		t1.dept_id = #{dept_id}
+	</select>
+	<select id="queryOne" resultType="com.imema.modules.sys.entity.SysDeptEntity">
+		select t1.* from sys_dept t1 where t1.del_flag !='-1 ' and
+		t1.dept_id = #{dept_id}
+	</select>
+	<select id="queryHaveChild" resultType="com.imema.modules.sys.entity.SysDeptEntity">
+		select t1.* from sys_dept t1 where t1.del_flag!='-1 ' and
+		t1.parent_id = #{dept_id}
+	</select>
+
+	<select id="orderList" parameterType="map" resultType="com.imema.modules.sys.entity.SysDeptEntity">
+		select a.*,case when(select v.name from sys_dept v where v.dept_id = a.parent_id) is null then '一级部门' else (select v.name from sys_dept v where v.dept_id = a.parent_id) end as parent_name
+		from sys_dept a
+		where a.del_flag ='0'
+		<if test="p.name != null and p.name != '' ">
+			and a.name like concat('%',#{p.name ,jdbcType=VARCHAR},'%')
+		</if>
+
+		<if test="p.deptId != null and p.deptId !=''">
+			and a.dept_id = #{p.deptId}
+		</if>
+
+		<if test="p.parentId != null and p.parentId != '' ">
+			and a.parent_id = #{p.parentId}
+		</if>
+		<if test="p.orderNum != null and p.orderNum != '' ">
+			and a.order_num = #{p.orderNum}
+		</if>
+		<if test="p.delFlag != null and p.delFlag != '' ">
+			and a.del_flag = #{p.delFlag}
+		</if>
+	</select>
+</mapper>

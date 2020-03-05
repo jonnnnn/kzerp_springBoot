@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.imema.modules.sys.dao.SysMenuDao">
+
+	<select id="queryListParentId" resultType="com.imema.modules.sys.entity.SysMenuEntity">
+		select * from sys_menu where parent_id = #{parentId} order by order_num asc
+	</select>
+
+	<select id="queryNotButtonList" resultType="com.imema.modules.sys.entity.SysMenuEntity">
+		select * from sys_menu where type != 2 order by order_num asc
+	</select>
+	<select id="queryParentList" resultType="com.imema.modules.sys.entity.SysMenuEntity">
+		select t1.* from sys_menu t1 where
+		t1.parent_id = 0
+		order by t1.order_num asc
+	</select>
+	<select id="queryChildList"  resultType="com.imema.modules.sys.entity.SysMenuEntity">
+		select t1.*,(select t2.name from sys_menu t2 where t1.parent_id=t2.menu_id)as parent_name from sys_menu t1 where
+		t1.parent_id != 0
+		order by t1.order_num asc
+	</select>
+	<select id="queryChildNoMenuList"  resultType="com.imema.modules.sys.entity.SysMenuEntity">
+		select t1.*,(select t2.name from sys_menu t2 where t1.parent_id=t2.menu_id)as parent_name from sys_menu t1 where
+		t1.parent_id != 0 and t1.menu_id !=4 and t1.parent_id !=4
+		order by t1.order_num asc
+	</select>
+	<select id="queryOne" resultType="com.imema.modules.sys.entity.SysMenuEntity">
+		select t1.* from sys_menu t1 where
+		t1.menu_id = #{menuId}
+	</select>
+	<select id="queryHaveChild" resultType="com.imema.modules.sys.entity.SysMenuEntity">
+		select t1.* from sys_menu t1 where
+		t1.parent_id = #{menuId}
+	</select>
+</mapper>

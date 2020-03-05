@@ -9,6 +9,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.imema.common.validator.group.AddGroup;
 import com.imema.common.validator.group.UpdateGroup;
 import com.imema.data.AbstractBaseModel;
+import com.imema.modules.base.entity.MtlProduct;
 import lombok.Data;
 
 import javax.validation.constraints.NotNull;
@@ -89,5 +90,7 @@ public class SalesOrderLineEntity extends AbstractBaseModel implements Serializa
 	 * 修改日期
 	 */
 	private Date updateDate;
+
+	private String note;
 
 }

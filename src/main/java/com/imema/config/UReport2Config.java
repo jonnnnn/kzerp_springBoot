@@ -34,7 +34,7 @@ public class UReport2Config {
             if(fileStoreDir.startsWith("/")) {
                 fileStoreDir = fileStoreDir.substring(1);
             }
-            fileStoreDir = ResourceUtils.getURL(CLASSPATH_PREFIX).getPath() + fileStoreDir;
+            /*fileStoreDir = ResourceUtils.getURL(CLASSPATH_PREFIX).getPath() + fileStoreDir;*/
         }
         fileReportProvider.setFileStoreDir(fileStoreDir);
     }

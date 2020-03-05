@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.imema.modules.inv.dao.OnhandDao">
+
+    <select id="queryPage" resultType="com.imema.modules.inv.entity.OnhandEntity">
+        select iod.*,(select `code` from mtl_product where id=iod.product_id)product_code,
+        (select `code` from mas_warehouse where id=iod.warehouse_id)warehouse_code,
+        (select `name` from sys_dept where dept_id=iod.company_id)company_name
+         from inv_onhand iod where 1=1
+        <if test="p.companyName!=null and p.companyName!='' ">
+            and iod.company_id in(select dept_id from sys_dept where `name` like '%${p.companyName}%')
+        </if>
+        <if test="p.warehouseId!=null and p.warehouseId!='' ">
+            and iod.warehouse_id=#{p.warehouseId}
+        </if>
+        <if test="p.productCode!=null and p.productCode!='' ">
+            and iod.product_id in(select id from mtl_product where `code` like '%${p.productCode}%')
+        </if>
+    </select>
+
+    <select id="getSockByPW" resultType="java.lang.Integer">
+        select qty from v_prod_wh_stock a where a.WAREHOUSE_ID = #{warehouseId} and a.PRODUCT_ID= #{productId}
+    </select>
+
+    <select id="getCurrentValStock" resultType="com.imema.data.DefaultBaseModel">
+        select *  from v_prod_wh_stock vpws where vpws.company_id=#{iBaseModel.companyId}
+        and vpws.warehouse_id=#{iBaseModel.warehouseId} and vpws.product_id=#{iBaseModelLine.productId}
+    </select>
+</mapper>

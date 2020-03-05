@@ -44,9 +44,9 @@ public class SalesOrderController {
      * 列表
      */
     @RequestMapping("/list")
-    @ApiOperation(value = "销售单列表",response = SalesOrderEntity.class)
+    //@ApiOperation(value = "销售单列表",response = SalesOrderEntity.class)
 //    @RequiresPermissions("so:salesorder:list")
-    @DataFilter(tableAlias="a")
+   // @DataFilter(tableAlias="a")
     @ResponseBody
     public R list(@RequestBody Map<String, Object> params){
         PageUtils page = salesOrderService.queryOrder(params);
@@ -107,12 +107,13 @@ public class SalesOrderController {
     // @RequiresPermissions("so:salesorder:delete")
     public R submit(@RequestBody Map<String, Object> params){
         String id = params.get("id") == null ? "" : params.get("id") .toString();
-        try {
+        return salesOrderService.submit(id);
+       /* try {
             return salesOrderService.submit(id);
         }catch (Exception e){
             e.printStackTrace();
             return R.error(e.getMessage());
-        }
+        }*/
     }
 
     /**

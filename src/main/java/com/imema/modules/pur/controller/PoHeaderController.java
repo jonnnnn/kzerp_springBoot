@@ -82,9 +82,10 @@ public class PoHeaderController {
     public R save(@RequestBody PoHeaderEntity poHeader){
         try {
             if(poHeader.get("saveType")!=null && poHeader.get("saveType").equals("pick")){
-                this.submit(poHeader);
+                /*this.submit(poHeader);*/
             }else {
                 EntityState state = poHeader.getState();
+                System.out.println("***********state:"+state);
                 if (state.equals(EntityState.NEW)) {
                     if(poHeader.getOrderType().equals(OrderEnum.PO.getvalue())){
                         poHeader.setOrderNum(billnumHelper.getNextNum("PUR_PO_HEADER"));
@@ -95,11 +96,16 @@ public class PoHeaderController {
                     poHeader.setOrderDate(new Date());
                     poHeaderService.save(poHeader);
                     // 保存从表数据
+                    System.out.println("poHeader:"+poHeader);
                     poLineService.save(poHeader);
                 } else if (state.equals(EntityState.MODIFIED)) {
                     poHeaderService.save(poHeader);
                     poLineService.save(poHeader);
+                    System.out.println(poHeader);
+                   /* System.out.println(poHeader.getLineList().get(0));*/
+
                 } else if (state.equals(EntityState.DELETED)) {
+                    System.out.println("run");
                     poHeader.setDeletedFlag("Y");
                     poHeaderService.save(poHeader);
                 } else if (state.equals(EntityState.NONE)) {
@@ -134,7 +140,7 @@ public class PoHeaderController {
     /**
      * 提交并且自动入库
      */
-    public void submit(PoHeaderEntity poHeader) throws RuntimeException{
+    /*public void submit(PoHeaderEntity poHeader) throws RuntimeException{
         try {
             PoHeaderEntity po=poHeaderService.getById(poHeader.getId());
             if(!po.getStatus().equals(OrderEnum.SUBMIT.getvalue()) && !po.getStatus().equals(OrderEnum.SENDED.getvalue())){
@@ -173,7 +179,7 @@ public class PoHeaderController {
             e.printStackTrace();
             throw new RuntimeException(e.getMessage());
         }
-    }
+    }*/
     /**
      * 回滚
      */

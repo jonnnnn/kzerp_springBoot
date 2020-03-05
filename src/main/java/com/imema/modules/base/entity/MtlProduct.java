@@ -1,8 +1,10 @@
 package com.imema.modules.base.entity;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.imema.data.AbstractBaseModel;
 import lombok.Data;
+
 
 import java.io.Serializable;
 import java.util.Date;
@@ -12,24 +14,24 @@ import java.util.Date;
 public class MtlProduct extends AbstractBaseModel implements Serializable {
 
   private Integer id;
-  private String code;
+  private String prodid;
+  private String prodno;
   private String name;
-  private String alisaName;
-  private Integer categoryId;
-  private Integer vehicleId;
-  private Integer brandId;
-  private Integer madeinId;
-  private String barCode;
-  private String picCode;
+  private String manufacture;
+  private String approvalno;
+  private Integer bigpackagequantity;
+  private Integer midpackagequantity;
+  private String busitypetext;
+  private String purchaser;
+  private String purchaseid;
   private String specialParam;
   private String description;
   private String unit;
-  private String volume;
-  private String weight;
+  private String prodscopeno;
+  private String sterilization;
   private Integer defaultVendorId;
   private Integer status;
   private String pinyinCode;
-  private String wbCode;
   private String remark;
   private Integer companyId;
   private String deletedFlag;
@@ -37,5 +39,8 @@ public class MtlProduct extends AbstractBaseModel implements Serializable {
   private Date createDate;
   private String updateBy;
   private Date updateDate;
-  private Integer safeQty;
+
+  @TableField(exist = false)
+  private String allString;
+
 }

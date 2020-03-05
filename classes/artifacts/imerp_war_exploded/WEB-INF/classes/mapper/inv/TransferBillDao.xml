@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.imema.modules.inv.dao.TransferBillDao">
+
+    <select id="queryPage" resultType="com.imema.modules.inv.entity.TransferBillEntity">
+        select itb.*,(select `code` from mas_warehouse where id=itb.from_warehouse_id)from_warehouse_code,
+        (select `code` from mas_warehouse where id=itb.to_warehouse_id)to_warehouse_code,
+        (select `name` from sys_dept where dept_id=itb.out_company_id)out_company_name,
+        (select `name` from sys_dept where dept_id=itb.in_company_id)in_company_name,
+        (select cname from mas_employee where `code`=itb.pic)pic_name
+        from inv_transfer_bill itb where itb.deleted_flag='N'
+        <if test="p.status!=null and p.status!='' ">
+            and itb.status=#{p.status}
+        </if>
+        <if test="p.transferDate!=null and p.transferDate.size()>0 and p.transferDate[0]!=''  and p.transferDate[0]!=null ">
+            and itb.transfer_date between  #{p.transferDate[0]} and #{p.transferDate[1]}
+        </if>
+        <if test="p.fromWarehouseId!=null and p.fromWarehouseId!='' ">
+            and itb.from_warehouse_id=#{p.fromWarehouseId}
+        </if>
+        <if test="p.toWarehouseId!=null and p.toWarehouseId!='' ">
+            and itb.to_warehouse_id=#{p.toWarehouseId}
+        </if>
+        <if test="p.orderNum!=null and p.orderNum!='' ">
+            and itb.order_num like '%${p.orderNum}%'
+        </if>
+    </select>
+</mapper>

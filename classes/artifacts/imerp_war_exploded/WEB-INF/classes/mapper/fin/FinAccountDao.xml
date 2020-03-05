@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.imema.modules.fin.dao.FinAccountDao">
+    <select id="queryList" resultType="com.imema.modules.fin.entity.FinAccount">
+        select f.* from fin_account f where 1=1
+        <if test="p.name!=null and p.name!=''">
+            and f.name like '%${p.name}%'
+        </if>
+        <if test="p.bankName!=null and p.bankName!=''">
+            and f.bank_name like '%${p.bankName}%'
+        </if>
+        <if test="p.bankNum!=null and p.bankNum !=''">
+            and f.bank_num like '%${p.bankNum}%'
+        </if>
+        order by id desc
+    </select>
+    <select id="selectCountByName" resultType="java.lang.Integer">
+        select count(*) from fin_account f where 1=1 and f.name=#{name}
+    </select>
+</mapper>

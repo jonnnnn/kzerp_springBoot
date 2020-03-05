@@ -1,0 +1,1 @@
+(window["webpackJsonp"]=window["webpackJsonp"]||[]).push([["chunk-2d0da915"],{"6bc6":function(e){e.exports=JSON.parse('{"form":{"input":{"code":"仓库编号","name":"仓库名称","virtualFlag":"虚拟仓标志","address":"地址","pic":"负责人","mobileNo":"手机号","tel":"电话号","remark":"备注"}}}')}}]);

@@ -25,7 +25,7 @@ import java.util.Map;
 @Mapper
 public interface SalesOrderLineDao extends BaseMapper<SalesOrderLineEntity> {
 
-    List<SalesOrderLineEntity> getListByOrderId(Map<String ,Object> param);
+    List<Map> getListByOrderId(Map<String ,Object> param);
 
     BigDecimal getTotalPrice(Integer orderId);
 

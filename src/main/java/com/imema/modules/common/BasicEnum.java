@@ -22,8 +22,8 @@ public enum BasicEnum {
 	 * 标准下拉框类型
 	 */
 	employee("员工下拉框","employee","select code as `value`, cname as `key` from mas_employee e where e.cname like '%#query#%'"),
-	customer("客户下拉框","customer","select id as `value`, name as `key` from mas_cust_vendor e where e.name like '%#query#%'"),
-	vendor("供应商下拉框","vendor","select id as `value`, name as `key` from mas_cust_vendor e where e.cust_vendor='VENDOR' and e.name like '%#query#%'"),
+	customer("客户下拉框","customer","select id as `value`, custname as `key` from mas_cust_vendor e where e.custname like '%#query#%'"),
+	vendor("供应商下拉框","vendor","select id as `value`, custname as `key` from mas_cust_vendor e where e.cust_vendor='VENDOR' and e.custname like '%#query#%'"),
 	shipComp("物流下拉框","shipComp","select id as `value`, name as `key` from mas_cust_vendor e where e.cust_vendor='SUP' and e.name like '%#query#%'"),
 	customervendor("客户和供应商下拉框","customervendor","select id as `value`, name as `key` from mas_cust_vendor e where e.name like '%#query#%'"),
 	warehouse("仓库下拉框","warehouse","select id as `value`, code as `key` from mas_warehouse e where e.code like '%#query#%'"),
@@ -32,8 +32,7 @@ public enum BasicEnum {
 			" e.id not in (select PRODUCT_ID from mtl_product_price) and e.code like '%#query#%'"),
 	productbrand("物料品牌","pbrand","select id as `value`, name as `key` from mtl_product_brand e where e.name like '%#query#%'"),
 	productcategory("物料分类","pcategory","select id as `value`, name as `key` from mtl_product_category mpc" +
-			" where mpc.id not in (select parent_id from mtl_product_category) and mpc.name like '%#query#%' and mpc.id not" +
-			" in (select name from mtl_product)"),
+			" where mpc.name like '%#query#%' " ),
 	productcategoryall("物料所有分类","productcategoryall","select code as `value`, name as `key` from mtl_product_category e where" +
 			" e.name like '%#query#%'"),
 	productmadein("物料产地","pmadein","select id as `value`, name as `key` from mtl_product_madein e where e.name like '%#query#%'"),

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.imema.modules.fin.dao.FinInvoiceDao">
+    <select id="queryList" resultType="com.imema.modules.fin.entity.FinInvoice">
+        select f.*,si.name as iv_name from fin_invoice f
+        LEFT JOIN sys_dictionary_item si ON f.iv_type = si.code
+        LEFT JOIN (select * from sys_dictionary s where s.code='INVOICE_TYPE')sc
+        ON si.DICTIONARY_ID = sc.id where 1=1
+        <if test="p.code!=null and p.code!=''">
+            and f.code like '%${p.code}%'
+        </if>
+        <if test="p.customerName!=null and p.customerName!=''">
+            and f.customer_name like '%${p.customerName}%'
+        </if>
+        <if test="p.from!=null">
+            and date_format(f.iv_date,'%Y-%m-%d') <![CDATA[>=]]> #{p.from}
+        </if>
+        <if test="p.to!=null">
+            and date_format(f.iv_date,'%Y-%m-%d')  <![CDATA[<=]]> #{p.to}
+        </if>
+        order by id desc
+    </select>
+    <select id="selectCountByCode" resultType="java.lang.Integer">
+        select count(*) from fin_invoice f where 1=1
+        <if test="c.code!=null and c.code !=''">
+            and f.code= #{c.code}
+        </if>
+        <if test="c.id!=null and c.id!=0">
+            and f.id!= #{c.id}
+        </if>
+        <if test="c.companyId!=null and c.companyId!=0">
+            and f.COMPANY_ID= #{c.companyId}
+        </if>
+    </select>
+</mapper>

@@ -4,14 +4,17 @@
 
 package com.imema.modules.pur.entity;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.imema.data.AbstractBaseModel;
+import com.imema.modules.base.entity.MtlProduct;
 import lombok.Data;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 /**
  * 进货单明细
@@ -62,10 +65,13 @@ public class PoLineEntity extends AbstractBaseModel implements Serializable {
 	 * 采购价
 	 */
 	private BigDecimal costPrice;
-	/**
-	 * 备注
-	 */
-	private String remark;
+
+    /**
+     * 采购总价
+     */
+    private BigDecimal totalPrice;
+
+
 	/**
 	 * 创建人
 	 */
@@ -82,5 +88,16 @@ public class PoLineEntity extends AbstractBaseModel implements Serializable {
 	 * 修改日期
 	 */
 	private Date updateDate;
+
+    /**
+     * 备注
+     */
+	private String note;
+
+
+    /**
+     * 备注
+     */
+    private String remark;
 
 }

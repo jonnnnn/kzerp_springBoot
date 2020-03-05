@@ -21,13 +21,12 @@ import java.util.Map;
 public class SalesOrderLineServiceImpl extends BaseServiceImpl<SalesOrderLineDao, SalesOrderLineEntity> implements SalesOrderLineService {
 
     @Override
-    public List<SalesOrderLineEntity> queryOrder(Map<String, Object> params) {
+    public List<Map> queryOrder(Map<String, Object> params) {
         Map<String, Object> dataForm = (Map<String, Object>) params.get("dataForm");
         if(dataForm != null && dataForm.containsKey("data")){
             Map<String, Object> selectFrom = (Map<String, Object>) dataForm.get("data");
             if(selectFrom.containsKey("id")){
-                List<SalesOrderLineEntity> list =
-                        this.baseMapper.getListByOrderId(selectFrom);
+                List<Map> list = this.baseMapper.getListByOrderId(selectFrom);
                 return list;
             }
         }

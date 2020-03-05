@@ -1,0 +1,1 @@
+(window["webpackJsonp"]=window["webpackJsonp"]||[]).push([["chunk-2d214028"],{aeb0:function(e){e.exports=JSON.parse('{"form":{"data":{"type":"类型","code":"编码","name":"名称"}}}')}}]);

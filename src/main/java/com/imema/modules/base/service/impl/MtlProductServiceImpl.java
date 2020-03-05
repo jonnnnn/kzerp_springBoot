@@ -48,7 +48,7 @@ public class MtlProductServiceImpl extends BaseServiceImpl<MtlProductDao,MtlProd
             map = selectFrom;
         }
 
-        map.put("qureyStr",getParamStr(nameStr));
+        map.put("qureyStr",nameStr);
         if(map.get("companyId")==null)map.put("companyId",ShiroUtils.getCompanyId());
         List<MtlProduct> productList =this.baseMapper.getProduct(map);
 

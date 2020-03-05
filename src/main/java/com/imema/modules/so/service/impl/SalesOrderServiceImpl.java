@@ -54,18 +54,18 @@ public class SalesOrderServiceImpl extends BaseServiceImpl<SalesOrderDao, SalesO
     public PayrecService payrecService;
 
     @Override
-    @DataFilter(subDept = true, user = false, tableAlias = "a")
+    //@DataFilter(subDept = true, user = false, tableAlias = "a")
     public PageUtils queryOrder(Map<String, Object> params) {
         Map<String, Object> pageForm = (Map<String, Object>) params.get("pageForm");
         Map<String, Object> dataForm = (Map<String, Object>) params.get("dataForm");
         Map<String, Object> selectFrom = (Map<String, Object>) dataForm.get("data");
 
-        //物料ID
+        /*//物料ID
         if(selectFrom != null && selectFrom.containsKey("productName") && objIsNotBlank(selectFrom.get("productName"))){
             String productIds = mtlProductService.searchProductIds(selectFrom.get("productName")+"");
             selectFrom.put("productIds",productIds);
         }
-
+*/
 
         IPage<SalesOrderEntity> page = baseMapper.orderList(
                 new Query<SalesOrderEntity>().getPage(pageForm),
@@ -92,6 +92,7 @@ public class SalesOrderServiceImpl extends BaseServiceImpl<SalesOrderDao, SalesO
         if(isNewObj(orderEntity)){
             orderEntity.setStatus("NEW");
             orderEntity.setPic(ShiroUtils.getUserEntity().getUsername());
+
             if("RETURN".equals(orderEntity.getOrderType())){
                 isReturn = true;
                 try {
@@ -180,7 +181,7 @@ public class SalesOrderServiceImpl extends BaseServiceImpl<SalesOrderDao, SalesO
             return R.error("订单状态异常,请刷新页面再提交.");
         }
 
-        //自动分仓,生成可用来创建拣货和保留的对象
+        /*//自动分仓,生成可用来创建拣货和保留的对象
         HashMap<Integer,SalesOrderEntity> splitOrders = createStockObj(orderEntity);
         if(orderEntity.isAutoPeaking()){//自动拣货
             for(SalesOrderEntity tempOrder : splitOrders.values()){
@@ -208,17 +209,17 @@ public class SalesOrderServiceImpl extends BaseServiceImpl<SalesOrderDao, SalesO
                 }
 
             }
-        }
+        }*/
         //修改订单状态
         orderEntity.setStatus(OrderEnum.SUBMIT.getvalue());
         orderEntity.setState(EntityState.MODIFIED);
         this.save(orderEntity);
         //生成财务应收应付
-        payrecService.createrPayrec(orderEntity,isReturn?OrderEnum.SO_RETURN:OrderEnum.SO);
+        /*payrecService.createrPayrec(orderEntity,isReturn?OrderEnum.SO_RETURN:OrderEnum.SO);*/
         return null;
     }
 
-    public HashMap<Integer,SalesOrderEntity> createStockObj(SalesOrderEntity orderEntity){
+    /*public HashMap<Integer,SalesOrderEntity> createStockObj(SalesOrderEntity orderEntity){
         boolean isReturn = false;
         if("RETURN".equals(orderEntity.getOrderType())) isReturn = true;
 
@@ -276,5 +277,5 @@ public class SalesOrderServiceImpl extends BaseServiceImpl<SalesOrderDao, SalesO
         }
 
         return resMap;
-    }
+    }*/
 }

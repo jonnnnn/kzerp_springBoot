@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.imema.modules.inv.dao.InoutBillLineDao">
+    <update id="updateSourceLine">
+        update ${tableName} ppl,(select * from inv_inout_bill_line where bill_id
+        in(select id from inv_inout_bill where deleted_flag='N' and source_order_id=#{sourceId} and source_order_type=#{sourceOrderType}))inv
+        set ppl.real_qty=inv.real_qty,ppl.update_by=inv.update_by,ppl.update_date=inv.update_date
+        where ppl.id=inv.source_order_line_id
+    </update>
+
+    <select id="getInoutBillLineEntityListByInoutBillId" resultType="com.imema.modules.inv.entity.InoutBillLineEntity">
+        select iibl.*,(select `code` from mtl_product where id=iibl.product_id)product_code,
+        (select bar_code from mtl_product where id=iibl.product_id)bar_code
+         from inv_inout_bill_line iibl where bill_id=#{inoutBillId}
+    </select>
+    <select id="isExistAction" resultType="java.lang.Integer">
+        select count(*) from inv_inout_bill_line where bill_id in(select id from inv_inout_bill
+         where deleted_flag='N' and source_order_id=#{sourceId} and source_order_type=#{sourceOrderType}) and `status`='COMPLETED'
+    </select>
+    <select id="isActioned" resultType="java.lang.Integer">
+        select count(*) from inv_inout_bill_line where bill_id =#{billId} and `status`='NEW'
+    </select>
+    <select id="getRollAction" resultType="com.imema.modules.inv.entity.InoutBillLineEntity">
+        select l.* from inv_inout_bill_line l,inv_inout_bill h
+        where l.bill_id = h.id and h.source_order_id = #{sourceId} and h.source_order_type=#{sourceOrderType}
+         and h.`status` = 'NEW' and h.deleted_flag='N'
+        and h.id not in (select h1.bill_id from inv_inout_bill_line h1
+         where h1.bill_id=h.id and h1.`status`!='NEW') order by bill_id;
+    </select>
+</mapper>

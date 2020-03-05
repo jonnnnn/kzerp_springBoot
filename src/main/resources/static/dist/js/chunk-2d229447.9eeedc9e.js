@@ -1,0 +1,1 @@
+(window["webpackJsonp"]=window["webpackJsonp"]||[]).push([["chunk-2d229447"],{dd5f:function(e){e.exports=JSON.parse('{"form":{"dict":{"dictType":"字典类型","code":"编码","name":"名称","extendVal":"扩展属性","editFlag":"可否编辑","deleteFlag":"可否删除","remark":"备注","updateBy":"更新人","updateDate":"更新时间"}}}')}}]);

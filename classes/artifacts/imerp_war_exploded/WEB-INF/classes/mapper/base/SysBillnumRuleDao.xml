@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.imema.modules.base.dao.SysBillnumRuleDao">
+    <select id="selectByCodeName" resultType="com.imema.modules.base.entity.SysBillnumRule">
+        select sbr.*,sbrt.code,sbrt.name from sys_billnum_rule sbr
+        left join sys_billnum_rule_type sbrt on sbr.TYPE_ID=sbrt.ID
+        where 1=1
+        <if test="p.name!=null and p.name!=''">
+            and sbrt.name like '%${p.name}%'
+        </if>
+        <if test="p.code!=null and p.code!=''">
+            and sbrt.code like '%${p.code}%'
+        </if>
+        order by id desc
+    </select>
+    <select id="selectCountByType" resultType="java.lang.Integer">
+        select count(*) from sys_billnum_rule sbr where 1=1
+         and sbr.TYPE_ID=#{p.typeId} and sbr.company_id=#{p.companyId}
+         <if test="p.id !=null and p.id!=0">
+             and sbr.id != #{p.id}
+         </if>
+    </select>
+</mapper>

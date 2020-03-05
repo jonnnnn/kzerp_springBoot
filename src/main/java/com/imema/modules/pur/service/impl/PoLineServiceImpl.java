@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 
 @Service("poLineService")
@@ -81,7 +82,7 @@ public class PoLineServiceImpl extends BaseServiceImpl<PoLineDao, PoLineEntity> 
     }
 
     @Override
-    public List<PoLineEntity> getPoLineEntityListByPoId(Integer poHeaderId) {
+    public List<Map<String,Object>> getPoLineEntityListByPoId(Integer poHeaderId) {
         return baseMapper.getPoLineEntityListByPoId(poHeaderId);
     }
 

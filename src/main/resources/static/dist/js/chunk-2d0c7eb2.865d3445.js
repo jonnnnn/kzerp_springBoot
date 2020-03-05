@@ -1,0 +1,1 @@
+(window["webpackJsonp"]=window["webpackJsonp"]||[]).push([["chunk-2d0c7eb2"],{5353:function(t){t.exports=JSON.parse('{"data":{"input":{"pname":"父级菜单","parentId":"父级菜单","type":"类型","code":"编码","name":"名称","orderNum":"排序序号","sys":"系统数据与否","companyId":"公司ID","remark":"备注","attr1":"扩展弹性域1","attr2":"扩展弹性域2","attr3":"扩展弹性域3","attr4":"扩展弹性域4","attr5":"扩展弹性域5"}}}')}}]);

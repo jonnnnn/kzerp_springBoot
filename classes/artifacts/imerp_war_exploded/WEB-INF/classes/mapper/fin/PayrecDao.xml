@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) 2018-2019 广州盟码信息科技有限公司 All rights reserved.
+  -->
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.imema.modules.fin.dao.PayrecDao">
+    <update id="updateStatus">
+        update fin_payrec set STATUS ='PAID' where id = #{id} ;
+    </update>
+
+    <select id="queryPage" resultType="com.imema.modules.fin.entity.PayrecEntity">
+        select a.*,
+        (select name from mas_cust_vendor v where v.id = a.CUST_ID) as CUST_NAME,
+        ifnull((SELECT sum(frao.GATHERING_AMOUNT) FROM `fin_real_payrec_ord` frao,fin_real_payrec fra where fra.ID = frao.GATHERING_ID
+        and fra.DELETED_FLAG = 'N' and frao.PAYREC_ID = a.id),0) as YAMOUNT,
+        a.AMOUNT - ifnull((SELECT sum(frao.GATHERING_AMOUNT) FROM `fin_real_payrec_ord` frao,fin_real_payrec fra where fra.ID = frao.GATHERING_ID
+        and fra.DELETED_FLAG = 'N' and frao.PAYREC_ID = a.id),0) as PAMOUNT
+        from fin_payrec a where a.DELETED_FLAG='N'
+
+        <if test="p.type != null and p.type != '' ">
+            and a.type = #{p.type}
+        </if>
+        <if test="p.status != null and p.status != '' ">
+            and a.STATUS = #{p.status}
+        </if>
+        <if test="p.sourceOrderType != null and p.sourceOrderType != '' ">
+            and a.SOURCE_ORDER_TYPE = #{p.sourceOrderType}
+        </if>
+
+        <if test="p.sql_filter != null and p.sql_filter != '' ">
+            and ${p.sql_filter}
+        </if>
+        <if test="p.sourceOrderNum != null and p.sourceOrderNum != '' ">
+            and a.SOURCE_ORDER_NUM like concat('%',#{p.sourceOrderNum ,jdbcType=VARCHAR},'%')
+        </if>
+
+        <if test="p.custName != null and p.custName != '' ">
+            and a.CUST_ID in(select id from mas_cust_vendor v where v.`NAME` like concat('%',#{p.custName ,jdbcType=VARCHAR},'%') )
+        </if>
+
+        <if test="p.bDate != null and p.bDate.size()> 0 and p.bDate[0] != null and p.bDate[0] != ''" >
+            and a.ORDER_DATE >= #{p.bDate[0]}
+        </if>
+        <if test="p.bDate != null and p.bDate.size()> 1 and p.bDate[1] != null and p.bDate[1] != ''" >
+            and a.ORDER_DATE &lt;= #{p.bDate[1]}
+        </if>
+
+
+        <if test="page.orders ==null or page.orders.size() == 0 ">
+            order by id desc
+        </if>
+
+    </select>
+
+</mapper>

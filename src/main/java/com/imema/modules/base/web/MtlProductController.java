@@ -7,6 +7,7 @@ import com.imema.common.utils.R;
 import com.imema.modules.base.entity.MtlProduct;
 import com.imema.modules.base.service.MtlProductCategoryService;
 import com.imema.modules.base.service.MtlProductService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -37,16 +38,8 @@ public class MtlProductController {
 
     @PostMapping("/save")
     public R save(@RequestBody MtlProduct product) {
-        String cateCode = String.valueOf(product.get("cateCode"));
-        Map<String, Object> result = categoryService.selectPcategoryId(cateCode);
-        String allFirstLetter = PinyinUtil.getAllFirstLetter((String)result.get("name"));
-        String wbCode = CommonUtils.getWBCode((String)result.get("name"));
-
-        product.setCategoryId((Integer)result.get("p_cate"));
-        product.setName(cateCode);
-
+        String allFirstLetter = PinyinUtil.getAllFirstLetter(product.getName());
         product.setPinyinCode(allFirstLetter);
-        product.setWbCode(wbCode);
         productService.save(product);
         return R.ok();
     }

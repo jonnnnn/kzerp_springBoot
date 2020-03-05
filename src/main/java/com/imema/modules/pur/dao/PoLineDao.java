@@ -26,10 +26,13 @@ import java.util.Map;
 public interface PoLineDao extends BaseMapper<PoLineEntity> {
     @Select("select sum(order_qty*cost_price) from pur_po_line where order_id=#{poHeaderId}")
     BigDecimal getOrderTotalPrice(Integer poHeaderId);
-    List<PoLineEntity> getPoLineEntityListByPoId(Integer poHeaderId);
+
+    List<Map<String,Object>> getPoLineEntityListByPoId(Integer poHeaderId);
+
     @Select("select count(*) from pur_po_line where abs(ifnull(order_qty,0)-ifnull(total_accept_qty,0))>0 and order_id=#{poHeaderId}")
     Integer isRkLast(Integer poHeaderId);
     void rollSourceLine(@Param("inoutBillLineEntityList") List<InoutBillLineEntity> inoutBillLineEntityList);
+
     @Select("select sum(ifnull(total_freight,0)) from pur_po_line where order_id=#{poHeaderId}")
     BigDecimal getOrderTotalFreight(Integer poHeaderId);
 

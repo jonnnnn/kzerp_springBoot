@@ -37,7 +37,7 @@ public class SalesOrderLineController {
     @RequestMapping("/list")
 //    @RequiresPermissions("so:salesorder:list")
     public R list(@RequestBody Map<String, Object> params){
-        List<SalesOrderLineEntity> page = salesOrderLineService.queryOrder(params);
+        List<Map> page = salesOrderLineService.queryOrder(params);
 
         return R.ok().putData(page);
     }
